@@ -28,11 +28,18 @@ export const fetchAndStoreToken = async (): Promise<boolean> => {
       method: "POST",
       credentials: "include",
     });
-    if (!res.ok) return false;
+
+    if (!res.ok) {
+      const data = await res.json().catch(() => ({}));
+      console.error("[token] /jwt failed:", res.status, data.message);
+      return false;
+    }
+
     const data = await res.json();
     setToken(data.token);
     return true;
-  } catch {
+  } catch (err) {
+    console.error("[token] server এ পৌঁছানো যায়নি:", err);
     return false;
   }
 };
