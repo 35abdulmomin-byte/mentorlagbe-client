@@ -1,13 +1,25 @@
-import type { TuitionsResponse } from "./types";
+import type { Tuition, TuitionsResponse } from "./types";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL;
 
-const emptyResponse: TuitionsResponse = {
+export type FiltersResponse = {
+  subjects: string[];
+  classLevels: string[];
+  modes: string[];
+};
+
+const emptyTuitions: TuitionsResponse = {
   tuitions: [],
   total: 0,
   page: 1,
   limit: 9,
   totalPages: 0,
+};
+
+const emptyFilters: FiltersResponse = {
+  subjects: [],
+  classLevels: [],
+  modes: ["Online", "Offline"],
 };
 
 export async function getTuitions(
@@ -21,9 +33,33 @@ export async function getTuitions(
     const res = await fetch(`${API_URL}/tuitions?${query}`, {
       cache: "no-store",
     });
-    if (!res.ok) return emptyResponse;
+    if (!res.ok) return emptyTuitions;
     return await res.json();
   } catch {
-    return emptyResponse;
+    return emptyTuitions;
+  }
+}
+
+export async function getFilters(): Promise<FiltersResponse> {
+  try {
+    const res = await fetch(`${API_URL}/tuitions/filters`, {
+      cache: "no-store",
+    });
+    if (!res.ok) return emptyFilters;
+    return await res.json();
+  } catch {
+    return emptyFilters;
+  }
+}
+
+export async function getTuition(id: string): Promise<Tuition | null> {
+  try {
+    const res = await fetch(`${API_URL}/tuitions/${id}`, {
+      cache: "no-store",
+    });
+    if (!res.ok) return null;
+    return await res.json();
+  } catch {
+    return null;
   }
 }
