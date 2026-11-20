@@ -13,6 +13,7 @@ import {
 } from "lucide-react";
 import { toast } from "sonner";
 import Logo from "@/components/Logo";
+import ThemeToggle from "@/components/ThemeToggle";
 import { Button, buttonVariants } from "@/components/ui/button";
 import { signOut, useSession } from "@/lib/auth-client";
 import { clearToken } from "@/lib/token";
@@ -26,9 +27,11 @@ const navLinks = [
 ];
 
 const roleStyles: Record<string, string> = {
-  student: "bg-blue-100 text-blue-700",
-  tutor: "bg-emerald-100 text-emerald-700",
-  admin: "bg-purple-100 text-purple-700",
+  student: "bg-blue-100 text-blue-700 dark:bg-blue-500/20 dark:text-blue-300",
+  tutor:
+    "bg-emerald-100 text-emerald-700 dark:bg-emerald-500/20 dark:text-emerald-300",
+  admin:
+    "bg-purple-100 text-purple-700 dark:bg-purple-500/20 dark:text-purple-300",
 };
 
 function Avatar({ name, image }: { name: string; image?: string | null }) {
@@ -122,94 +125,99 @@ export default function Navbar() {
           ))}
         </nav>
 
-        {/* Desktop auth area */}
-        <div className="hidden items-center gap-2 md:flex">
-          {isPending ? (
-            <div className="h-9 w-32 animate-pulse rounded-md bg-muted" />
-          ) : user ? (
-            <div className="relative" ref={menuRef}>
-              <button
-                type="button"
-                onClick={() => setMenuOpen((v) => !v)}
-                className="flex items-center gap-2 rounded-full border py-1 pl-1 pr-3 hover:bg-muted"
-              >
-                <Avatar name={user.name} image={user.image} />
-                <span className="max-w-[110px] truncate text-sm font-medium">
-                  {user.name}
-                </span>
-                <RoleBadge role={role} />
-                <ChevronDown className="h-4 w-4 text-muted-foreground" />
-              </button>
+        {/* ডান দিক: থিম বাটন + auth + মোবাইল মেনু বাটন */}
+        <div className="flex items-center gap-2">
+          <ThemeToggle />
 
-              {menuOpen && (
-                <div className="absolute right-0 mt-2 w-60 rounded-lg border bg-popover p-1 shadow-lg">
-                  <div className="px-3 py-2">
-                    <p className="truncate text-sm font-semibold">
-                      {user.name}
-                    </p>
-                    <p className="truncate text-xs text-muted-foreground">
-                      {user.email}
-                    </p>
+          {/* Desktop auth area */}
+          <div className="hidden items-center gap-2 md:flex">
+            {isPending ? (
+              <div className="h-9 w-32 animate-pulse rounded-md bg-muted" />
+            ) : user ? (
+              <div className="relative" ref={menuRef}>
+                <button
+                  type="button"
+                  onClick={() => setMenuOpen((v) => !v)}
+                  className="flex items-center gap-2 rounded-full border py-1 pl-1 pr-3 hover:bg-muted"
+                >
+                  <Avatar name={user.name} image={user.image} />
+                  <span className="max-w-[110px] truncate text-sm font-medium">
+                    {user.name}
+                  </span>
+                  <RoleBadge role={role} />
+                  <ChevronDown className="h-4 w-4 text-muted-foreground" />
+                </button>
+
+                {menuOpen && (
+                  <div className="absolute right-0 mt-2 w-60 rounded-lg border bg-popover p-1 shadow-lg">
+                    <div className="px-3 py-2">
+                      <p className="truncate text-sm font-semibold">
+                        {user.name}
+                      </p>
+                      <p className="truncate text-xs text-muted-foreground">
+                        {user.email}
+                      </p>
+                    </div>
+                    <div className="my-1 h-px bg-border" />
+                    <Link
+                      href={`/dashboard/${role}`}
+                      onClick={closeAll}
+                      className="flex items-center gap-2 rounded-md px-3 py-2 text-sm hover:bg-muted"
+                    >
+                      <LayoutDashboard className="h-4 w-4" />
+                      Dashboard
+                    </Link>
+                    <Link
+                      href="/dashboard/profile"
+                      onClick={closeAll}
+                      className="flex items-center gap-2 rounded-md px-3 py-2 text-sm hover:bg-muted"
+                    >
+                      <UserCog className="h-4 w-4" />
+                      Update Profile
+                    </Link>
+                    <div className="my-1 h-px bg-border" />
+                    <button
+                      type="button"
+                      onClick={handleSignOut}
+                      className="flex w-full items-center gap-2 rounded-md px-3 py-2 text-sm text-red-600 hover:bg-red-50 dark:text-red-400 dark:hover:bg-red-500/10"
+                    >
+                      <LogOut className="h-4 w-4" />
+                      Sign Out
+                    </button>
                   </div>
-                  <div className="my-1 h-px bg-border" />
-                  <Link
-                    href={`/dashboard/${role}`}
-                    onClick={closeAll}
-                    className="flex items-center gap-2 rounded-md px-3 py-2 text-sm hover:bg-muted"
-                  >
-                    <LayoutDashboard className="h-4 w-4" />
-                    Dashboard
-                  </Link>
-                  <Link
-                    href="/dashboard/profile"
-                    onClick={closeAll}
-                    className="flex items-center gap-2 rounded-md px-3 py-2 text-sm hover:bg-muted"
-                  >
-                    <UserCog className="h-4 w-4" />
-                    Update Profile
-                  </Link>
-                  <div className="my-1 h-px bg-border" />
-                  <button
-                    type="button"
-                    onClick={handleSignOut}
-                    className="flex w-full items-center gap-2 rounded-md px-3 py-2 text-sm text-red-600 hover:bg-red-50"
-                  >
-                    <LogOut className="h-4 w-4" />
-                    Sign Out
-                  </button>
-                </div>
-              )}
-            </div>
-          ) : (
-            <>
-              <Link
-                href="/sign-in"
-                className={buttonVariants({ variant: "outline" })}
-              >
-                Sign In
-              </Link>
-              <Link href="/sign-up" className={buttonVariants()}>
-                Sign Up
-              </Link>
-            </>
-          )}
-        </div>
+                )}
+              </div>
+            ) : (
+              <>
+                <Link
+                  href="/sign-in"
+                  className={buttonVariants({ variant: "outline" })}
+                >
+                  Sign In
+                </Link>
+                <Link href="/sign-up" className={buttonVariants()}>
+                  Sign Up
+                </Link>
+              </>
+            )}
+          </div>
 
-        {/* Mobile menu button */}
-        <Button
-          type="button"
-          variant="ghost"
-          size="icon"
-          className="md:hidden"
-          onClick={() => setMobileOpen((v) => !v)}
-          aria-label="Toggle menu"
-        >
-          {mobileOpen ? (
-            <CloseIcon className="h-5 w-5" />
-          ) : (
-            <Menu className="h-5 w-5" />
-          )}
-        </Button>
+          {/* Mobile menu button */}
+          <Button
+            type="button"
+            variant="ghost"
+            size="icon"
+            className="md:hidden"
+            onClick={() => setMobileOpen((v) => !v)}
+            aria-label="Toggle menu"
+          >
+            {mobileOpen ? (
+              <CloseIcon className="h-5 w-5" />
+            ) : (
+              <Menu className="h-5 w-5" />
+            )}
+          </Button>
+        </div>
       </div>
 
       {/* Mobile panel */}
@@ -266,7 +274,7 @@ export default function Navbar() {
                 <button
                   type="button"
                   onClick={handleSignOut}
-                  className="flex items-center gap-2 rounded-md px-3 py-2 text-sm text-red-600 hover:bg-red-50"
+                  className="flex items-center gap-2 rounded-md px-3 py-2 text-sm text-red-600 hover:bg-red-50 dark:text-red-400 dark:hover:bg-red-500/10"
                 >
                   <LogOut className="h-4 w-4" />
                   Sign Out
