@@ -13,6 +13,7 @@ import {
   Lock,
   Mail,
   Search,
+  ShieldCheck,
   Zap,
 } from "lucide-react";
 import { toast } from "sonner";
@@ -188,6 +189,16 @@ export default function SignInPage() {
               Sign Up
             </Link>
           </p>
+
+          <div className="mt-4 border-t pt-4 text-center">
+            <Link
+              href="/admin-login"
+              className="inline-flex items-center gap-1.5 text-sm text-muted-foreground hover:text-primary"
+            >
+              <ShieldCheck className="h-4 w-4" />
+              Admin Login
+            </Link>
+          </div>
         </div>
       </section>
     </main>
