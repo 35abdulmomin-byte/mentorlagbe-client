@@ -13,10 +13,7 @@ import {
   Lock,
   Mail,
   Search,
-  ShieldCheck,
-  UserRound,
   Zap,
-  type LucideIcon,
 } from "lucide-react";
 import { toast } from "sonner";
 import { signIn } from "@/lib/auth-client";
@@ -24,42 +21,6 @@ import { fetchAndStoreToken } from "@/lib/token";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-
-type DemoAccount = {
-  key: string;
-  label: string;
-  email: string;
-  password: string;
-  icon: LucideIcon;
-  tone: string;
-};
-
-const demoAccounts: DemoAccount[] = [
-  {
-    key: "admin",
-    label: "Demo Admin Login",
-    email: "demo-admin@mentorlagbe.com",
-    password: "Admin@123",
-    icon: ShieldCheck,
-    tone: "bg-purple-100 text-purple-700",
-  },
-  {
-    key: "tutor",
-    label: "Demo Tutor Login",
-    email: "demo-tutor@mentorlagbe.com",
-    password: "Tutor@123",
-    icon: GraduationCap,
-    tone: "bg-emerald-100 text-emerald-700",
-  },
-  {
-    key: "student",
-    label: "Demo Student Login",
-    email: "demo-student@mentorlagbe.com",
-    password: "Student@123",
-    icon: UserRound,
-    tone: "bg-blue-100 text-blue-700",
-  },
-];
 
 const highlights = [
   { icon: Search, text: "Subject, class level আর mode দিয়ে tuition খোঁজো" },
@@ -73,36 +34,6 @@ export default function SignInPage() {
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [demoLoading, setDemoLoading] = useState<string | null>(null);
-
-  const busy = loading || demoLoading !== null;
-
-  // সাধারণ আর demo দুই লগইনের জন্য একই ফাংশন
-  const login = async (emailValue: string, passwordValue: string) => {
-    const { data, error } = await signIn.email({
-      email: emailValue,
-      password: passwordValue,
-    });
-
-    if (error) {
-      toast.error(error.message || "ইমেইল বা পাসওয়ার্ড ভুল");
-      return;
-    }
-
-    // লগইন সফল, এবার JWT আনো
-    const ok = await fetchAndStoreToken();
-    if (!ok) {
-      toast.error("টোকেন আনতে সমস্যা হয়েছে, আবার চেষ্টা করো");
-      return;
-    }
-
-    const role =
-      (data?.user as { role?: string } | undefined)?.role || "student";
-
-    toast.success("সফলভাবে সাইন ইন হয়েছে");
-    router.push(`/dashboard/${role}`);
-    router.refresh();
-  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -115,14 +46,30 @@ export default function SignInPage() {
     }
 
     setLoading(true);
-    await login(email.trim(), password);
-    setLoading(false);
-  };
+    const { data, error } = await signIn.email({
+      email: email.trim(),
+      password,
+    });
 
-  const handleDemo = async (account: DemoAccount) => {
-    setDemoLoading(account.key);
-    await login(account.email, account.password);
-    setDemoLoading(null);
+    if (error) {
+      setLoading(false);
+      return toast.error(error.message || "ইমেইল বা পাসওয়ার্ড ভুল");
+    }
+
+    // লগইন সফল, এবার JWT আনো
+    const ok = await fetchAndStoreToken();
+    setLoading(false);
+
+    if (!ok) {
+      return toast.error("টোকেন আনতে সমস্যা হয়েছে, আবার চেষ্টা করো");
+    }
+
+    const role =
+      (data?.user as { role?: string } | undefined)?.role || "student";
+
+    toast.success("সফলভাবে সাইন ইন হয়েছে");
+    router.push(`/dashboard/${role}`);
+    router.refresh();
   };
 
   return (
@@ -220,7 +167,7 @@ export default function SignInPage() {
               </div>
             </div>
 
-            <Button type="submit" className="h-11 w-full" disabled={busy}>
+            <Button type="submit" className="h-11 w-full" disabled={loading}>
               {loading ? (
                 <>
                   <Loader2 className="mr-2 h-4 w-4 animate-spin" />
@@ -234,50 +181,6 @@ export default function SignInPage() {
               )}
             </Button>
           </form>
-
-          {/* Demo access */}
-          <div className="mt-6 border-t pt-5">
-            <div className="flex items-center justify-between">
-              <p className="flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
-                <Zap className="h-3.5 w-3.5 text-amber-500" />
-                Quick demo access (1-click)
-              </p>
-              <span className="text-xs font-medium text-primary">
-                Instant test login
-              </span>
-            </div>
-
-            <div className="mt-3 space-y-2">
-              {demoAccounts.map((account) => (
-                <button
-                  key={account.key}
-                  type="button"
-                  disabled={busy}
-                  onClick={() => handleDemo(account)}
-                  className="flex w-full items-center gap-3 rounded-xl border bg-background p-3 text-left transition-colors hover:border-primary hover:bg-primary/5 disabled:cursor-not-allowed disabled:opacity-60"
-                >
-                  <span
-                    className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-lg ${account.tone}`}
-                  >
-                    <account.icon className="h-4 w-4" />
-                  </span>
-                  <span className="min-w-0 flex-1">
-                    <span className="block text-sm font-semibold">
-                      {account.label}
-                    </span>
-                    <span className="block truncate text-xs text-muted-foreground">
-                      {account.email}
-                    </span>
-                  </span>
-                  {demoLoading === account.key ? (
-                    <Loader2 className="h-4 w-4 animate-spin text-primary" />
-                  ) : (
-                    <ArrowRight className="h-4 w-4 text-muted-foreground" />
-                  )}
-                </button>
-              ))}
-            </div>
-          </div>
 
           <p className="mt-6 text-center text-sm text-muted-foreground">
             নতুন ইউজার?{" "}
