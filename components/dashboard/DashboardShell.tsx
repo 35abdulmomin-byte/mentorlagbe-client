@@ -22,6 +22,7 @@ import {
   type LucideIcon,
 } from "lucide-react";
 import { toast } from "sonner";
+import ThemeToggle from "@/components/ThemeToggle";
 import { Button } from "@/components/ui/button";
 import { signOut, useSession } from "@/lib/auth-client";
 import { clearToken } from "@/lib/token";
@@ -82,9 +83,11 @@ const menus: Record<string, NavItem[]> = {
 };
 
 const roleStyles: Record<string, string> = {
-  student: "bg-blue-100 text-blue-700",
-  tutor: "bg-emerald-100 text-emerald-700",
-  admin: "bg-purple-100 text-purple-700",
+  student: "bg-blue-100 text-blue-700 dark:bg-blue-500/20 dark:text-blue-300",
+  tutor:
+    "bg-emerald-100 text-emerald-700 dark:bg-emerald-500/20 dark:text-emerald-300",
+  admin:
+    "bg-purple-100 text-purple-700 dark:bg-purple-500/20 dark:text-purple-300",
 };
 
 function Avatar({
@@ -242,7 +245,7 @@ export default function DashboardShell({
                 className={cn(
                   "rounded-full px-2 py-0.5 text-xs font-medium uppercase",
                   plan === "pro"
-                    ? "bg-amber-100 text-amber-700"
+                    ? "bg-amber-100 text-amber-700 dark:bg-amber-500/20 dark:text-amber-300"
                     : "bg-muted text-muted-foreground"
                 )}
               >
@@ -291,7 +294,7 @@ export default function DashboardShell({
             onClick={handleSignOut}
             title="Sign Out"
             className={cn(
-              "flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-red-600 hover:bg-red-50",
+              "flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-red-600 hover:bg-red-50 dark:text-red-400 dark:hover:bg-red-500/10",
               collapsed && "lg:justify-center"
             )}
           >
@@ -338,6 +341,7 @@ export default function DashboardShell({
           </div>
 
           <div className="flex items-center gap-3">
+            <ThemeToggle />
             <div className="hidden text-right sm:block">
               <p className="text-sm font-medium leading-tight">{user.name}</p>
               <p className="text-xs text-muted-foreground">{user.email}</p>
