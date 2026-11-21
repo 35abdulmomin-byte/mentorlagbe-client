@@ -13,11 +13,12 @@ import {
   Lock,
   Mail,
   Search,
-  ShieldCheck,
   Zap,
 } from "lucide-react";
 import { toast } from "sonner";
+import GoogleIcon from "@/components/GoogleIcon";
 import { signIn } from "@/lib/auth-client";
+import { clearPendingRole } from "@/lib/pendingRole";
 import { fetchAndStoreToken } from "@/lib/token";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -35,6 +36,9 @@ export default function SignInPage() {
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [googleLoading, setGoogleLoading] = useState(false);
+
+  const busy = loading || googleLoading;
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -71,6 +75,24 @@ export default function SignInPage() {
     toast.success("সফলভাবে সাইন ইন হয়েছে");
     router.push(`/dashboard/${role}`);
     router.refresh();
+  };
+
+  const handleGoogle = async () => {
+    setGoogleLoading(true);
+    // Sign In পেজ থেকে এলে আগের বাছাই করা role মুছে ফেলা
+    clearPendingRole();
+
+    const { error } = await signIn.social({
+      provider: "google",
+      callbackURL: `${window.location.origin}/auth/callback`,
+      newUserCallbackURL: `${window.location.origin}/auth/callback?new=1`,
+    });
+
+    // সফল হলে ব্রাউজার Google এ চলে যায়, তাই এখানে শুধু error হলেই আসা হয়
+    if (error) {
+      setGoogleLoading(false);
+      toast.error(error.message || "Google সাইন ইন শুরু করা যায়নি");
+    }
   };
 
   return (
@@ -168,7 +190,7 @@ export default function SignInPage() {
               </div>
             </div>
 
-            <Button type="submit" className="h-11 w-full" disabled={loading}>
+            <Button type="submit" className="h-11 w-full" disabled={busy}>
               {loading ? (
                 <>
                   <Loader2 className="mr-2 h-4 w-4 animate-spin" />
@@ -183,22 +205,34 @@ export default function SignInPage() {
             </Button>
           </form>
 
+          {/* বিভাজক */}
+          <div className="my-5 flex items-center gap-3">
+            <div className="h-px flex-1 bg-border" />
+            <span className="text-xs uppercase text-muted-foreground">অথবা</span>
+            <div className="h-px flex-1 bg-border" />
+          </div>
+
+          <Button
+            type="button"
+            variant="outline"
+            className="h-11 w-full"
+            disabled={busy}
+            onClick={handleGoogle}
+          >
+            {googleLoading ? (
+              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+            ) : (
+              <GoogleIcon className="mr-2 h-4 w-4" />
+            )}
+            Continue with Google
+          </Button>
+
           <p className="mt-6 text-center text-sm text-muted-foreground">
             নতুন ইউজার?{" "}
             <Link href="/sign-up" className="font-medium text-primary underline">
               Sign Up
             </Link>
           </p>
-
-          <div className="mt-4 border-t pt-4 text-center">
-            <Link
-              href="/admin-login"
-              className="inline-flex items-center gap-1.5 text-sm text-muted-foreground hover:text-primary"
-            >
-              <ShieldCheck className="h-4 w-4" />
-              Admin Login
-            </Link>
-          </div>
         </div>
       </section>
     </main>
