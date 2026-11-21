@@ -1,6 +1,9 @@
 import type { NextConfig } from "next";
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
+// শেষের স্ল্যাশ থাকলে বাদ দেওয়া হয়
+const API_URL = (
+  process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000"
+).replace(/\/+$/, "");
 
 const nextConfig: NextConfig = {
   // auth আর jwt রিকোয়েস্ট client এর নিজের ডোমেইন দিয়ে server এ যাবে,

@@ -1,6 +1,7 @@
 import { fetchAndStoreToken, getToken } from "@/lib/token";
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL;
+// শেষের স্ল্যাশ থাকলে বাদ দেওয়া হয়
+const API_URL = (process.env.NEXT_PUBLIC_API_URL || "").replace(/\/+$/, "");
 
 export async function authFetch(
   path: string,
