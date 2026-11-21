@@ -16,9 +16,7 @@ import {
   User,
 } from "lucide-react";
 import { toast } from "sonner";
-import GoogleIcon from "@/components/GoogleIcon";
-import { signIn, signUp } from "@/lib/auth-client";
-import { setPendingRole } from "@/lib/pendingRole";
+import { signUp } from "@/lib/auth-client";
 import { fetchAndStoreToken } from "@/lib/token";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -63,9 +61,6 @@ export default function SignUpPage() {
   const [showPassword, setShowPassword] = useState(false);
   const [role, setRole] = useState("");
   const [loading, setLoading] = useState(false);
-  const [googleLoading, setGoogleLoading] = useState(false);
-
-  const busy = loading || googleLoading;
 
   // পাসওয়ার্ডের শক্তি (০ থেকে ৪)
   const strength = useMemo(() => {
@@ -117,27 +112,6 @@ export default function SignUpPage() {
     toast.success("অ্যাকাউন্ট তৈরি হয়েছে! স্বাগতম");
     router.push(`/dashboard/${role}`);
     router.refresh();
-  };
-
-  const handleGoogle = async () => {
-    if (!role) {
-      return toast.error("আগে Student নাকি Tutor সেটা বাছো");
-    }
-
-    setGoogleLoading(true);
-    // Google থেকে ফিরে এসে এই role বসানো হবে
-    setPendingRole(role);
-
-    const { error } = await signIn.social({
-      provider: "google",
-      callbackURL: `${window.location.origin}/auth/callback`,
-      newUserCallbackURL: `${window.location.origin}/auth/callback?new=1`,
-    });
-
-    if (error) {
-      setGoogleLoading(false);
-      toast.error(error.message || "Google সাইন আপ শুরু করা যায়নি");
-    }
   };
 
   return (
@@ -317,7 +291,7 @@ export default function SignUpPage() {
               )}
             </div>
 
-            <Button type="submit" className="h-11 w-full" disabled={busy}>
+            <Button type="submit" className="h-11 w-full" disabled={loading}>
               {loading ? (
                 <>
                   <Loader2 className="mr-2 h-4 w-4 animate-spin" />
@@ -331,31 +305,6 @@ export default function SignUpPage() {
               )}
             </Button>
           </form>
-
-          {/* বিভাজক */}
-          <div className="my-5 flex items-center gap-3">
-            <div className="h-px flex-1 bg-border" />
-            <span className="text-xs uppercase text-muted-foreground">অথবা</span>
-            <div className="h-px flex-1 bg-border" />
-          </div>
-
-          <Button
-            type="button"
-            variant="outline"
-            className="h-11 w-full"
-            disabled={busy}
-            onClick={handleGoogle}
-          >
-            {googleLoading ? (
-              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-            ) : (
-              <GoogleIcon className="mr-2 h-4 w-4" />
-            )}
-            Sign up with Google
-          </Button>
-          <p className="mt-2 text-center text-xs text-muted-foreground">
-            Google এ যাওয়ার আগে ওপরে Student বা Tutor বেছে নাও।
-          </p>
 
           <p className="mt-6 text-center text-sm text-muted-foreground">
             আগে থেকেই অ্যাকাউন্ট আছে?{" "}
