@@ -21,10 +21,10 @@ export const clearToken = () => {
   } catch {}
 };
 
-// BetterAuth session থেকে server এর /jwt রুটে গিয়ে টোকেন আনা
+// BetterAuth session থেকে JWT আনা (client এর /api/jwt হয়ে server এর /jwt এ যায়)
 export const fetchAndStoreToken = async (): Promise<boolean> => {
   try {
-    const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/jwt`, {
+    const res = await fetch("/api/jwt", {
       method: "POST",
       credentials: "include",
     });
