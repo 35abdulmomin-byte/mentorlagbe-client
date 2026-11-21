@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { buttonVariants } from "@/components/ui/button";
+import Reveal from "@/components/Reveal";
 import SectionHeading from "@/components/SectionHeading";
 import TuitionCard from "@/components/TuitionCard";
 import { getTuitions } from "@/lib/api";
@@ -9,10 +10,12 @@ export default async function FeaturedTuitions() {
 
   return (
     <section className="mx-auto max-w-7xl px-4 py-16">
-      <SectionHeading
-        title="Featured Tuitions"
-        subtitle="Latest approved tuition batches and mentorship programs from our tutors."
-      />
+      <Reveal>
+        <SectionHeading
+          title="Featured Tuitions"
+          subtitle="Latest approved tuition batches and mentorship programs from our tutors."
+        />
+      </Reveal>
 
       {tuitions.length === 0 ? (
         <p className="rounded-xl border border-dashed p-10 text-center text-muted-foreground">
@@ -20,20 +23,26 @@ export default async function FeaturedTuitions() {
         </p>
       ) : (
         <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-          {tuitions.map((tuition) => (
-            <TuitionCard key={tuition._id} tuition={tuition} />
+          {tuitions.map((tuition, index) => (
+            <Reveal
+              key={tuition._id}
+              delay={(index % 3) * 120}
+              className="h-full"
+            >
+              <TuitionCard tuition={tuition} />
+            </Reveal>
           ))}
         </div>
       )}
 
-      <div className="mt-10 text-center">
+      <Reveal className="mt-10 text-center">
         <Link
           href="/tuitions"
           className={buttonVariants({ variant: "outline", size: "lg" })}
         >
           View All Tuitions
         </Link>
-      </div>
+      </Reveal>
     </section>
   );
 }
