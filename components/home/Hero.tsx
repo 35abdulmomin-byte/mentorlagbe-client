@@ -12,9 +12,13 @@ import { buttonVariants } from "@/components/ui/button";
 export default function Hero() {
   return (
     <section className="relative overflow-hidden bg-gradient-to-b from-primary/10 via-background to-background">
-      <div className="mx-auto grid max-w-7xl items-center gap-12 px-4 py-16 lg:grid-cols-2 lg:py-24">
+      {/* পেছনের নরম গোল আকার */}
+      <div className="pointer-events-none absolute -left-24 top-10 h-72 w-72 animate-pulse rounded-full bg-primary/10 blur-3xl" />
+      <div className="pointer-events-none absolute -right-24 bottom-0 h-80 w-80 animate-pulse rounded-full bg-primary/10 blur-3xl" />
+
+      <div className="relative mx-auto grid max-w-7xl items-center gap-12 px-4 py-16 lg:grid-cols-2 lg:py-24">
         {/* Left: text */}
-        <div>
+        <div className="animate-in fade-in slide-in-from-bottom-6 fill-mode-both duration-700">
           <span className="inline-flex items-center gap-2 rounded-full border bg-background px-3 py-1 text-xs font-medium text-muted-foreground">
             <BadgeCheck className="h-4 w-4 text-primary" />
             Verified tutors across Bangladesh
@@ -69,8 +73,8 @@ export default function Hero() {
         </div>
 
         {/* Right: illustration */}
-        <div className="relative mx-auto w-full max-w-md">
-          <div className="rounded-3xl border bg-card p-6 shadow-lg">
+        <div className="relative mx-auto w-full max-w-md animate-in fade-in slide-in-from-right-8 fill-mode-both delay-200 duration-1000">
+          <div className="rounded-3xl border bg-card p-6 shadow-lg transition-transform duration-500 hover:-translate-y-1">
             <div className="flex items-center gap-4">
               <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-primary text-primary-foreground">
                 <GraduationCap className="h-7 w-7" />
@@ -107,11 +111,11 @@ export default function Hero() {
             </div>
           </div>
 
-          <div className="absolute -left-4 -top-4 hidden items-center gap-2 rounded-xl border bg-background px-3 py-2 text-sm shadow-md sm:flex">
+          <div className="absolute -left-4 -top-4 hidden animate-bounce items-center gap-2 rounded-xl border bg-background px-3 py-2 text-sm shadow-md [animation-duration:3s] sm:flex">
             <Star className="h-4 w-4 fill-amber-400 text-amber-400" />
             Top rated
           </div>
-          <div className="absolute -bottom-4 -right-4 hidden items-center gap-2 rounded-xl border bg-background px-3 py-2 text-sm shadow-md sm:flex">
+          <div className="absolute -bottom-4 -right-4 hidden animate-bounce items-center gap-2 rounded-xl border bg-background px-3 py-2 text-sm shadow-md [animation-delay:1s] [animation-duration:3.5s] sm:flex">
             <Users className="h-4 w-4 text-primary" />
             1,000+ learners
           </div>
@@ -120,6 +124,3 @@ export default function Hero() {
     </section>
   );
 }
-
-
-
