@@ -10,8 +10,8 @@ Students and parents struggle to find verified tutors by subject, class level, m
 
 ## Live URL
 
-- **Live Site:** https://mentorlagbe-client-gules.vercel.app/
-- **Server API:** https://vercel.com/abdul-momin1/mentorlagbe-server-3xld
+- **Live Site:** https://mentorlagbe-client-gules.vercel.app
+- **Server API:** https://mentorlagbe-server-3xld.vercel.app
 - **Server Repository:** https://github.com/35abdulmomin-byte/mentorlagbe-server
 
 ## Admin Credentials
