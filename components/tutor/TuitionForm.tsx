@@ -25,7 +25,7 @@ type Props = {
   submitLabel: string;
   submitting?: boolean;
   disabled?: boolean;
-  onSubmit: (payload: TuitionPayload) => void | Promise<void>;
+  onSubmit: (payload: TuitionPayload) => unknown;
 };
 
 const selectClass =
