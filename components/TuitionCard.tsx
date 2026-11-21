@@ -6,13 +6,13 @@ import type { Tuition } from "@/lib/types";
 
 export default function TuitionCard({ tuition }: { tuition: Tuition }) {
   return (
-    <div className="flex h-full flex-col overflow-hidden rounded-xl border bg-card shadow-sm transition-shadow hover:shadow-md">
+    <div className="group flex h-full flex-col overflow-hidden rounded-xl border bg-card shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-lg">
       <div className="relative aspect-[16/10] w-full overflow-hidden bg-muted">
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img
           src={tuition.bannerImage}
           alt={tuition.title}
-          className="h-full w-full object-cover"
+          className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
         />
         <span
           className={cn(
